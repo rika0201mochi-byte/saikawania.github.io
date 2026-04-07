@@ -415,6 +415,24 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ===== ストップボタン ===== */
+.btn-stop {
+  border: 1.5px solid #f87171;
+  background: rgba(248,113,113,.15);
+  color: #f87171;
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-size: 11px; font-weight: 700;
+  cursor: pointer;
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  transition: all .2s;
+  margin-left: auto; margin-right: 8px;
+}
+.btn-stop:active { background: rgba(248,113,113,.3); }
+
+/* 生成中ロック */
+.ui-locked { pointer-events: none; opacity: .45; transition: opacity .3s; }
+
 /* ===== エラー表示 ===== */
 .init-error {
   background: rgba(127,29,29,.2);
@@ -447,6 +465,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 
 <header>
   <div class="logo">🎭 相談・自慢マンガメーカー</div>
+  <button class="btn-stop" id="stopBtn" onclick="stopGeneration()" style="display:none;">⏹ 停止</button>
   <div class="status-badge">
     <div class="sdot" id="statusDot"></div>
     <span id="statusText">初期化中</span>
@@ -574,8 +593,8 @@ var SERVER_BASE = 'https://rika0201mochi-byte.github.io/saikawania.github.io';
 var SYSTEM_PROMPT_URL = SERVER_BASE + '/system_prompt.txt';
 var GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/';
 var YAML_MODEL = 'gemini-2.5-pro';
-var IMG_MODEL = 'gemini-2.0-flash-preview-image-generation';
-var RETRY_DELAYS = [8000, 20000, 40000];
+var IMG_MODEL = 'gemini-3.1-flash-image-preview';
+var RETRY_DELAYS = [10000, 25000];
 var PAGE_TOTAL = 4;
 
 // ===== キャラ定義 =====
@@ -643,6 +662,8 @@ var pageYamls = [];
 var pageData = [];
 var isGenerating = false;
 var isRetrying = false;
+var stopRequested = false;
+var activeAbortControllers = [];
 
 // ===== ユーティリティ =====
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -765,22 +786,31 @@ async function analyzeUserImage(){
   var btn = document.getElementById('analyzeBtn');
   btn.disabled = true; btn.textContent = '⏳ 解析中...';
   try{
+    // v3のanalyzeRefImagesと同じプロンプト・モデルを流用
     var parts = [
       {inline_data:{mime_type:userImgMime, data:userImgB64}},
-      {text:'この画像のキャラクターの外見を日本語で簡潔に1行で答えてください。身長の目安、髪色・髪型、服装の色と種類、持ち物（色・形を簡潔に）を含めて記述してください。例：「155cm, 黒髪ショート, 白いTシャツ, デニムパンツ, 黄色いトートバッグ」の形式で、説明なしに直接記述だけ返してください。'}
+      {text:'以下の画像はマンガのキャラクターシートです。各キャラクターについてJSONのみを返してください。\nappearanceには「身長, 髪色・髪型, 服装の色と種類, 持ち物（色・形を簡潔に）」を記述してください。\n[\n{"name":"名前","attr":"性別・年齢など","appearance":"162cm, 茶髪ロング, 白いブラウス, 赤い革製ショルダーバッグ","personality":"性格","speech":"口調・語尾のクセ","traits":"あるある・定番パターン"}\n]'}
     ];
-    var body = {contents:[{role:'user',parts:parts}],generationConfig:{temperature:0.2}};
-    var res = await fetch(GEMINI_BASE+'gemini-2.5-flash:generateContent?key='+apiKey,
+    var body = {contents:[{role:'user',parts:parts}],generationConfig:{temperature:0.3}};
+    var res = await fetch(GEMINI_BASE+'gemini-2.5-pro:generateContent?key='+apiKey,
       {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     var data = await res.json();
     if(data.error) throw new Error(data.error.message);
-    var text = ((data.candidates||[])[0]?.content?.parts||[]).map(function(p){return p.text||'';}).join('').trim();
-    if(text){
-      document.getElementById('userAppearance').value = text;
-      showToast('✅ 外見を読み取りました');
-    } else {
-      throw new Error('読み取り結果が空でした');
+    var text = ((data.candidates||[])[0]?.content?.parts||[]).map(function(p){return p.text||'';}).join('');
+    var m = text.match(/\[[\s\S]*\]/);
+    if(!m) throw new Error('解析失敗');
+    var charas = JSON.parse(m[0]);
+    if(!charas.length) throw new Error('キャラクターが検出されませんでした');
+    var c = charas[0];
+    // 各フィールドに反映
+    if(c.name) document.getElementById('userName').value = c.name;
+    if(c.attr) document.getElementById('userAttr').value = c.attr;
+    if(c.appearance) document.getElementById('userAppearance').value = c.appearance;
+    if(c.speech || c.personality){
+      var sp = [c.personality, c.speech].filter(Boolean).join('。');
+      document.getElementById('userSpeech').value = sp;
     }
+    showToast('✅ キャラクター情報を読み取りました');
   }catch(e){
     showToast('❌ '+friendlyError(e));
   }finally{
@@ -847,7 +877,9 @@ async function callImageWithRefs(apiKey,prompt,charImg,layoutFiles){
   var body={contents:[{role:'user',parts:parts}],generationConfig:{responseModalities:['TEXT','IMAGE']}};
   var url=GEMINI_BASE+IMG_MODEL+':generateContent?key='+apiKey;
   for(var attempt=0;attempt<=RETRY_DELAYS.length;attempt++){
+    if(stopRequested) throw new Error('停止しました');
     var controller=new AbortController();
+    activeAbortControllers.push(controller);
     var tid=setTimeout(function(){controller.abort();},90000);
     try{
       var res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:controller.signal});
@@ -935,6 +967,31 @@ function buildUserPrompt(topic,pageNum,prevContext){
   return prompt;
 }
 
+// ===== UIロック =====
+function lockUI(lock){
+  var targets = ['modeVioletta','modeKuroe','previewVioletta','previewKuroe',
+    'userImgInput','analyzeBtn','clearImgBtn','userName','userAttr','userAppearance','userSpeech',
+    'userImgArea'];
+  // カード単位でロック
+  document.querySelectorAll('.card').forEach(function(card, i){
+    if(i < 3) { // APIキーカード・キャラ選択・ユーザーキャラの3カード
+      if(lock) card.classList.add('ui-locked');
+      else card.classList.remove('ui-locked');
+    }
+  });
+  document.getElementById('stopBtn').style.display = lock ? '' : 'none';
+}
+
+// ===== 強制ストップ =====
+function stopGeneration(){
+  if(!isGenerating) return;
+  stopRequested = true;
+  activeAbortControllers.forEach(function(c){ try{c.abort();}catch(e){} });
+  activeAbortControllers = [];
+  logMsg('⏹ 停止リクエスト送信','info');
+  showToast('⏹ 停止しています...');
+}
+
 // ===== 生成フロー =====
 async function startGeneration(){
   var apiKey=document.getElementById('apiKey').value.trim();
@@ -948,8 +1005,9 @@ async function startGeneration(){
   btn.disabled=true; btn.textContent='⏳ 生成中...';
   document.getElementById('pagesArea').innerHTML='';
   pageYamls=[]; pageData=[];
-  isGenerating=true;
+  isGenerating=true; stopRequested=false; activeAbortControllers=[];
   setStatus('busy','生成中'); showProgress(true);
+  lockUI(true);
 
   var pagesArea=document.getElementById('pagesArea');
   for(var i=1;i<=PAGE_TOTAL;i++){
@@ -966,6 +1024,7 @@ async function startGeneration(){
 
   var doneCount=0;
   for(var page=1;page<=PAGE_TOTAL;page++){
+    if(stopRequested){ logMsg('⏹ 停止しました','info'); break; }
     try{
       setProgress('📝','Page '+page+' YAML生成中...');
       setBar(Math.round((page-1)/PAGE_TOTAL*100),false);
@@ -973,11 +1032,14 @@ async function startGeneration(){
       doneCount++;
       setBar(Math.round(page/PAGE_TOTAL*100),false);
     }catch(e){
+      if(stopRequested){ logMsg('⏹ 停止しました','info'); break; }
       logMsg('⚠️ Page '+page+' スキップ → 次ページへ','info');
     }
   }
 
-  if(doneCount>0){
+  if(stopRequested){
+    setProgress('⏹','停止しました'); setBar(0,false); setStatus('ready','停止');
+  } else if(doneCount>0){
     setProgress('✅',doneCount+'/'+PAGE_TOTAL+'ページ完成！');
     setBar(100,false); setStatus('ready','完了');
     logMsg('🎉 '+doneCount+'/'+PAGE_TOTAL+'ページ完成','ok');
@@ -985,7 +1047,8 @@ async function startGeneration(){
     setProgress('❌','すべてのページが失敗しました');
     setBar(0,false); setStatus('ready','待機中');
   }
-  isGenerating=false;
+  isGenerating=false; stopRequested=false;
+  lockUI(false);
   btn.disabled=false; btn.textContent='🎨 マンガを生成する';
 }
 
