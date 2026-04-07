@@ -957,9 +957,12 @@ async function callImageWithRefs(apiKey,prompt,charImg,layoutFiles){
 
 // ===== YAML前処理 =====
 function preprocessYaml(yamlOutput){
-  var instructionMatch=yamlOutput.match(/【画像生成AIへの絶対指示】([\s\S]*?)(?=```yaml)/);
-  var yamlMatch=yamlOutput.match(/```ya?ml[\s\S]*?\n([\s\S]*?)```/);
-  if(!yamlMatch) return {promptForImage:yamlOutput,layoutPattern:'T3-E'};
+  // セルフチェック宣言部分を除去（【セルフチェック完了】〜【舞台・小道具メモ】の前まで）
+  var cleaned = yamlOutput.replace(/【セルフチェック完了】[\s\S]*?(?=【舞台・小道具メモ】|【画像生成AIへの絶対指示】|```yaml)/,'');
+
+  var instructionMatch=cleaned.match(/【画像生成AIへの絶対指示】([\s\S]*?)(?=```yaml)/);
+  var yamlMatch=cleaned.match(/```ya?ml[\s\S]*?\n([\s\S]*?)```/);
+  if(!yamlMatch) return {promptForImage:cleaned,layoutPattern:'T3-E'};
   var layoutPattern='T3-E';
   var lm=yamlMatch[1].match(/layout_pattern\s*:\s*["']?([A-Z0-9-]+)["']?/);
   if(lm) layoutPattern=lm[1];
