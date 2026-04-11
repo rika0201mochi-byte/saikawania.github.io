@@ -1213,7 +1213,7 @@ async function generatePage(pageNum){
       '<button class="btn btn-success btn-sm" onclick="dlPageImage('+pageNum+')">⬇️ 画像保存</button>'+
       '<button class="btn btn-sm" onclick="retryPageImgOnly('+pageNum+')">🔄 再生成</button>'+
       '</div>'+
-      '<div style="margin-top:10px;">'+nextBtn+'</div>';
+      '<div class="btn-next-wrap" style="margin-top:10px;">'+nextBtn+'</div>';
     statusEl.className='page-status done'; statusEl.textContent='✅ 完成';
     setBar(Math.round(pageNum/pageTotal*100),false);
     logMsg('✅ Page '+pageNum+' 完成','ok');
@@ -1259,6 +1259,8 @@ async function goNextPage(pageNum){
 function showFinished(){
   var btn=document.getElementById('startBtn');
   btn.disabled=false; btn.textContent='🎨 マンガを生成する';
+  // 前ページに残っている「次へ」ボタンエリアを全部消す
+  document.querySelectorAll('.btn-next-wrap').forEach(function(el){el.remove();});
   showToast('🎉 全'+pageTotal+'ページ完成！');
   setProgress('🎉','全'+pageTotal+'ページ完成！');
 }
@@ -1308,7 +1310,7 @@ async function retryPageImgOnly(pageNum){
       '<button class="btn btn-success btn-sm" onclick="dlPageImage('+pageNum+')">⬇️ 画像保存</button>'+
       '<button class="btn btn-sm" onclick="retryPageImgOnly('+pageNum+')">🔄 再生成</button>'+
       '</div>'+
-      '<div style="margin-top:10px;">'+nextBtn+'</div>';
+      '<div class="btn-next-wrap" style="margin-top:10px;">'+nextBtn+'</div>';
     statusEl.className='page-status done'; statusEl.textContent='✅ 完成';
     logMsg('✅ Page '+pageNum+' 再生成完成','ok');
   }catch(e){
