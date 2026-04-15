@@ -1205,7 +1205,7 @@ async function generatePage(pageNum){
   logMsg('🎨 Page '+pageNum+' 画像生成中...','info');
 
   try{
-    var preprocessed=preprocessYaml(yamlRaw);
+    var preprocessed=preprocessYaml(pageYamls[pageNum-1]);
     var layoutName=preprocessed.layoutPattern||'T3-E';
     var layoutB64=LAYOUT_IMAGES[layoutName];
     var layoutFile=null;
