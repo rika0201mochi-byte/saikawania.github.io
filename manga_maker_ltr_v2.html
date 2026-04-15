@@ -993,30 +993,17 @@ function addSerialNumbers(yamlText) {
   var circled = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩',
                  '⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
   var count = 0;
-  // effectsブロック内のtextには番号を振らない
-  // type: speech/narration/thoughtを持つtextのみ対象
+  var inEffects = false;
   var lines = yamlText.split('\n');
   var result = [];
   for (var i = 0; i < lines.length; i++) {
     var line = lines[i];
-    if (/^ +- text : "(?![①-⑳])/.test(line)) {
-      // 直後の数行にtype:があるか確認（最大5行先）
-      var hasType = false;
-      for (var j = i+1; j < Math.min(i+6, lines.length); j++) {
-        if (/type\s*:\s*"(speech|narration|thought)"/.test(lines[j])) {
-          hasType = true; break;
-        }
-        // 次の- text:や別キーが来たら打ち切り
-        if (/^ +- text :/.test(lines[j]) || /^ +[a-z_]+\s*:/.test(lines[j]) && !/type/.test(lines[j])) {
-          // positionやstyleが来たらeffects内
-          if (/position|style/.test(lines[j])) break;
-        }
-      }
-      if (hasType) {
-        var num = circled[count] || '(' + (count+1) + ')';
-        count++;
-        line = line.replace(/( +- text : ")/, '$1' + num);
-      }
+    if (/effects\s*:/.test(line))  { inEffects = true; }
+    if (/^\s+lines\s*:/.test(line)) { inEffects = false; }
+    if (!inEffects && /- text : "/.test(line)) {
+      var num = circled[count] || '(' + (count+1) + ')';
+      count++;
+      line = line.replace('- text : "', '- text : "' + num);
     }
     result.push(line);
   }
