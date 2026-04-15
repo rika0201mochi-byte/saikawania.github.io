@@ -988,6 +988,18 @@ async function callImageWithRefs(apiKey,prompt,charImg,layoutFiles){
   throw new Error('リトライ上限に達しました');
 }
 
+// ===== セリフ番号付与 =====
+function addSerialNumbers(yamlText) {
+  var circled = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩',
+                 '⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
+  var count = 0;
+  return yamlText.replace(/( +- text : ")(?![①-⑳])/g, function(match, p1) {
+    var num = circled[count] || '(' + (count+1) + ')';
+    count++;
+    return p1 + num;
+  });
+}
+
 // ===== YAML前処理 =====
 function preprocessYaml(yamlOutput){
   // セルフチェック宣言部分を除去（【セルフチェック完了】〜【舞台・小道具メモ】の前まで）
