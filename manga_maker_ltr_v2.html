@@ -102,7 +102,7 @@ header {
 }
 .logo {
   font-family: 'Kaisei Decol', serif;
-  font-size: 16px; font-weight: 700;
+  font-size: 13px; font-weight: 700;
   background: linear-gradient(90deg, var(--theme-a), var(--theme-b));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -110,7 +110,7 @@ header {
 }
 .status-badge {
   display: flex; align-items: center; gap: 7px;
-  font-size: 18px; color: var(--text-muted);
+  font-size: 14px; color: var(--text-muted);
   font-family: 'Space Mono', monospace; margin-left: auto;
 }
 .sdot { width: 8px; height: 8px; border-radius: 50%; background: #555; }
@@ -148,7 +148,7 @@ main {
 .card:focus-within::before { opacity: 1; }
 
 .card-label {
-  font-size: 16px;
+  font-size: 13px;
   font-family: 'Space Mono', monospace;
   color: var(--theme-a);
   text-transform: uppercase;
@@ -164,7 +164,7 @@ input[type="password"], input[type="text"], textarea {
   border-radius: var(--radius-sm);
   color: var(--text);
   font-family: 'M PLUS Rounded 1c', sans-serif;
-  font-size: 19px;
+  font-size: 13px;
   padding: 10px 13px;
   width: 100%;
   outline: none;
@@ -177,7 +177,7 @@ input:focus, textarea:focus {
 }
 textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 .field { margin-bottom: 10px; }
-.field-label { font-size: 16px; color: var(--text-muted); margin-bottom: 5px; display: block; }
+.field-label { font-size: 13px; color: var(--text-muted); margin-bottom: 5px; display: block; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 /* ===== ボタン ===== */
@@ -185,7 +185,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   border: none; border-radius: var(--radius-sm);
   cursor: pointer;
   font-family: 'M PLUS Rounded 1c', sans-serif;
-  font-weight: 700; font-size: 19px;
+  font-weight: 700; font-size: 13px;
   padding: 10px 16px;
   transition: all .15s;
   white-space: nowrap;
@@ -195,7 +195,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   background: var(--btn-primary);
   color: var(--btn-text);
   width: 100%; padding: 16px;
-  font-size: 16px;
+  font-size: 13px;
   border-radius: var(--radius);
   letter-spacing: .5px;
   box-shadow: 0 4px 20px var(--theme-glow);
@@ -207,7 +207,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   background: var(--surface2);
   color: var(--text);
   border: 1px solid var(--border);
-  padding: 7px 13px; font-size: 16px;
+  padding: 7px 13px; font-size: 13px;
 }
 .btn-sm:active { background: var(--surface3); }
 .btn-sm:disabled { opacity: .4; cursor: not-allowed; }
@@ -215,7 +215,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   background: var(--theme-bg);
   color: var(--theme-a);
   border: 1px solid var(--theme-border);
-  padding: 7px 13px; font-size: 16px;
+  padding: 7px 13px; font-size: 13px;
   transition: all .2s;
 }
 .btn-accent:active { opacity: .7; }
@@ -273,10 +273,10 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   filter: drop-shadow(0 2px 8px var(--theme-glow));
   transition: filter .5s;
 }
-.mode-name { font-size: 19px; font-weight: 900; margin-bottom: 4px; }
+.mode-name { font-size: 13px; font-weight: 900; margin-bottom: 4px; }
 .mode-name-violetta { color: #c084fc; }
 .mode-name-kuroe { color: #60a5fa; }
-.mode-desc { font-size: 18px; color: var(--text-muted); line-height: 1.6; }
+.mode-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
 
 /* ===== キャラプレビュー ===== */
 .chara-preview {
@@ -297,8 +297,8 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   background: var(--theme-bg);
 }
 .chara-preview-name { font-size: 14px; font-weight: 900; color: var(--theme-a); transition: color .5s; }
-.chara-preview-attr { font-size: 18px; color: var(--text-muted); margin-top: 2px; }
-.chara-preview-body { padding: 12px 15px; font-size: 16px; color: var(--text-muted); line-height: 1.9; }
+.chara-preview-attr { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
+.chara-preview-body { padding: 12px 15px; font-size: 13px; color: var(--text-muted); line-height: 1.9; }
 .chara-tag {
   display: inline-block;
   background: var(--theme-bg);
@@ -306,7 +306,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   color: var(--theme-a);
   border-radius: 100px;
   padding: 2px 10px; margin: 2px;
-  font-size: 18px; font-weight: 700;
+  font-size: 14px; font-weight: 700;
   transition: all .5s;
 }
 
@@ -332,11 +332,11 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   position: absolute; inset: 0;
   background: rgba(0,0,0,.6);
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px; opacity: 0; transition: opacity .2s;
+  font-size: 14px; opacity: 0; transition: opacity .2s;
 }
 .user-img-thumb:hover .thumb-overlay { opacity: 1; }
 .user-img-controls { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-.user-img-hint { font-size: 18px; color: var(--text-muted); line-height: 1.5; }
+.user-img-hint { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
 
 /* ===== プログレス ===== */
 .progress-section {
@@ -351,7 +351,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   display: flex; align-items: center; gap: 8px;
   padding: 12px 16px; cursor: pointer;
 }
-.progress-label { font-size: 18px; font-weight: 700; flex: 1; }
+.progress-label { font-size: 14px; font-weight: 700; flex: 1; }
 .mini-bar { height: 3px; background: var(--surface3); }
 .mini-bar-fill {
   height: 100%;
@@ -368,7 +368,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 }
 .log-body { max-height: 0; overflow: hidden; transition: max-height .3s; }
 .progress-section.open .log-body { max-height: 180px; overflow-y: auto; }
-.log-line { display: flex; gap: 8px; padding: 3px 16px; font-size: 18px; font-family: 'Space Mono', monospace; }
+.log-line { display: flex; gap: 8px; padding: 3px 16px; font-size: 14px; font-family: 'Space Mono', monospace; }
 .log-ts { color: var(--text-muted); flex-shrink: 0; }
 .log-msg { color: var(--text); }
 .log-line.ok .log-msg { color: #4ade80; }
@@ -391,11 +391,11 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
 }
 .page-num {
   font-family: 'Space Mono', monospace;
-  font-size: 16px; color: var(--theme-a); font-weight: 700;
+  font-size: 13px; color: var(--theme-a); font-weight: 700;
   transition: color .5s;
 }
-.page-title { flex: 1; font-size: 18px; font-weight: 700; }
-.page-status { font-size: 18px; color: var(--text-muted); font-family: 'Space Mono', monospace; }
+.page-title { flex: 1; font-size: 14px; font-weight: 700; }
+.page-status { font-size: 14px; color: var(--text-muted); font-family: 'Space Mono', monospace; }
 .page-status.done { color: #4ade80; }
 .page-status.error { color: #f87171; }
 .page-body { padding: 14px; }
@@ -418,7 +418,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   animation: spin .8s linear infinite; margin-bottom: 14px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.load-text { font-size: 18px; color: var(--text-muted); }
+.load-text { font-size: 14px; color: var(--text-muted); }
 
 /* ===== トースト ===== */
 .toast {
@@ -428,7 +428,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   border: 1px solid var(--theme-border);
   border-radius: 100px;
   padding: 10px 20px;
-  font-size: 18px; font-weight: 700;
+  font-size: 14px; font-weight: 700;
   opacity: 0; transition: all .3s;
   z-index: 9999; white-space: nowrap;
   box-shadow: 0 8px 24px rgba(0,0,0,.4);
@@ -442,7 +442,7 @@ textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
   color: #f87171;
   border-radius: 100px;
   padding: 5px 14px;
-  font-size: 16px; font-weight: 700;
+  font-size: 13px; font-weight: 700;
   cursor: pointer;
   font-family: 'M PLUS Rounded 1c', sans-serif;
   transition: all .2s;
@@ -470,7 +470,7 @@ body.is-generating .page-actions .btn-sm {
   background: rgba(127,29,29,.2);
   border: 1px solid rgba(248,113,113,.3);
   border-radius: var(--radius-sm);
-  padding: 13px; font-size: 18px;
+  padding: 13px; font-size: 14px;
   color: #fca5a5; display: none; white-space: pre-line;
 }
 
@@ -481,7 +481,7 @@ body.is-generating .page-actions .btn-sm {
   border: 1px solid var(--theme-border);
   border-radius: 100px;
   padding: 4px 12px;
-  font-size: 18px; font-weight: 700;
+  font-size: 14px; font-weight: 700;
   color: var(--theme-a);
   margin-bottom: 14px;
   transition: all .5s;
@@ -637,6 +637,14 @@ body.is-generating .page-actions .btn-sm {
 <div class="toast" id="toast"></div>
 
 <footer style="text-align:center;padding:24px 16px;font-size:10px;color:var(--text-muted);font-family:'Space Mono',monospace;border-top:1px solid var(--border);margin-top:8px;">
+  <a href="https://note.com/vast_lily4547/n/n2bd1fee29e3f" target="_blank" rel="noopener" style="display:block;text-decoration:none;margin-bottom:18px;">
+    <div style="position:relative;border-radius:12px;overflow:hidden;box-shadow:0 0 0 2px var(--theme-a);transition:box-shadow .3s;" onmouseenter="this.style.boxShadow='0 0 18px 4px var(--theme-a)'" onmouseleave="this.style.boxShadow='0 0 0 2px var(--theme-a)'">
+      <img src="https://saikawaniania.github.io/conversational_manga_banner.png" alt="会話漫画プロンプト自動生成システム" style="width:100%;display:block;border-radius:12px;">
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 14px;background:linear-gradient(transparent,rgba(0,0,0,.7));border-radius:0 0 12px 12px;">
+        <div style="font-size:13px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8);">✨ もっと自由に漫画を作りたいあなたには！</div>
+      </div>
+    </div>
+  </a>
   © 2026 saikawania — 個人利用のみ可。改変・再配布・商用利用禁止。
 </footer>
 
@@ -1175,7 +1183,7 @@ async function generatePage(pageNum){
     isGenerating=false; lockUI(false);
     return;
   }
-  pageYamls[pageNum-1]=yamlRaw;
+  pageYamls[pageNum-1]=addSerialNumbers(yamlRaw);
   logMsg('✅ Page '+pageNum+' YAML完成','ok');
 
   // ===== 画像生成 =====
